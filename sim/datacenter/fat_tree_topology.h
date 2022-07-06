@@ -10,7 +10,7 @@
 #include "topology.h"
 #include "logfile.h"
 #include "eventlist.h"
-#include "switch.h"
+#include "switch_htsim.h"
 #include <ostream>
 
 //#define N K*K*K/4
@@ -44,9 +44,9 @@ class FatTreeTopology: public Topology{
   Queue * queues_nlp_nup[NK][NK];
   Queue * queues_ns_nlp[NSRV][NK];
 */
-  vector <Switch*> switches_lp;
-  vector <Switch*> switches_up;
-  vector <Switch*> switches_c;
+  vector <Switch_htsim*> switches_lp;
+  vector <Switch_htsim*> switches_up;
+  vector <Switch_htsim*> switches_c;
 
   vector< vector<Pipe*> > pipes_nc_nup;
   vector< vector<Pipe*> > pipes_nup_nlp;

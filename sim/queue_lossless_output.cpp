@@ -2,7 +2,7 @@
 #include <math.h>
 #include <iostream>
 #include <sstream>
-#include "switch.h"
+#include "switch_htsim.h"
 #include "queue_lossless_output.h"
 
 LosslessOutputQueue::LosslessOutputQueue(linkspeed_bps bitrate, mem_b maxsize, 

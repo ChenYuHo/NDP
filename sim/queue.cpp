@@ -1,9 +1,10 @@
 // -*- c-basic-offset: 4; tab-width: 8; indent-tabs-mode: t -*-        
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include "queue.h"
 #include "ndppacket.h"
 #include "queue_lossless.h"
+#include "common.h"
 
 Queue::Queue(linkspeed_bps bitrate, mem_b maxsize, EventList& eventlist, 
 	     QueueLogger* logger)
@@ -23,6 +24,7 @@ Queue::beginService()
 {
     /* schedule the next dequeue event */
     assert(!_enqueued.empty());
+//    myprintf("beginservice %llu\n", drainTime(_enqueued.back())+eventlist().now());
     eventlist().sourceIsPendingRel(*this, drainTime(_enqueued.back()));
 }
 
@@ -34,10 +36,11 @@ Queue::completeService()
     Packet* pkt = _enqueued.back();
     _enqueued.pop_back();
     _queuesize -= pkt->size();
-    pkt->flow().logTraffic(*pkt, *this, TrafficLogger::PKT_DEPART);
+//    pkt->flow().logTraffic(*pkt, *this, TrafficLogger::PKT_DEPART);
     if (_logger) _logger->logQueue(*this, QueueLogger::PKT_SERVICE, *pkt);
 
     /* tell the packet to move on to the next pipe */
+//    pkt->cnt+=1;
     pkt->sendOn();
 
     if (!_enqueued.empty()) {
@@ -56,16 +59,17 @@ Queue::doNextEvent()
 void
 Queue::receivePacket(Packet& pkt) 
 {
+    myprintf("queue receivepacket\n");
     if (_queuesize+pkt.size() > _maxsize) {
 	/* if the packet doesn't fit in the queue, drop it */
 	if (_logger) 
 	    _logger->logQueue(*this, QueueLogger::PKT_DROP, pkt);
-	pkt.flow().logTraffic(pkt, *this, TrafficLogger::PKT_DROP);
+//	pkt.flow().logTraffic(pkt, *this, TrafficLogger::PKT_DROP);
 	pkt.free();
 	_num_drops++;
 	return;
     }
-    pkt.flow().logTraffic(pkt, *this, TrafficLogger::PKT_ARRIVE);
+//    pkt.flow().logTraffic(pkt, *this, TrafficLogger::PKT_ARRIVE);
 
     /* enqueue the packet */
     bool queueWasEmpty = _enqueued.empty();
@@ -159,6 +163,7 @@ PriorityQueue::serviceTime(Packet& pkt) {
 void
 PriorityQueue::receivePacket(Packet& pkt) 
 {
+    myprintf("priority queue receive packet\n");
     //is this a PAUSE packet?
     if (pkt.type()==ETH_PAUSE){
 	EthPausePacket* p = (EthPausePacket*)&pkt;
@@ -189,7 +194,7 @@ PriorityQueue::receivePacket(Packet& pkt)
     }
 
     queue_priority_t prio = getPriority(pkt);
-    pkt.flow().logTraffic(pkt, *this, TrafficLogger::PKT_ARRIVE);
+//    pkt.flow().logTraffic(pkt, *this, TrafficLogger::PKT_ARRIVE);
 
     /* enqueue the packet */
     bool queueWasEmpty = false;
@@ -232,7 +237,7 @@ PriorityQueue::completeService()
     Packet* pkt = _queue[_servicing].back();
     _queue[_servicing].pop_back();
     _queuesize[_servicing] -= pkt->size();
-    pkt->flow().logTraffic(*pkt, *this, TrafficLogger::PKT_DEPART);
+//    pkt->flow().logTraffic(*pkt, *this, TrafficLogger::PKT_DEPART);
     if (_logger) _logger->logQueue(*this, QueueLogger::PKT_SERVICE, *pkt);
 
     /* tell the packet to move on to the next pipe */

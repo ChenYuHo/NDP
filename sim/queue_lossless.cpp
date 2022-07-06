@@ -2,10 +2,10 @@
 #include "queue_lossless.h"
 #include <math.h>
 #include <iostream>
-#include "switch.h"
+#include "switch_htsim.h"
 
-LosslessQueue::LosslessQueue(linkspeed_bps bitrate, mem_b maxsize, 
-			 EventList& eventlist, QueueLogger* logger, Switch* sw)
+LosslessQueue::LosslessQueue(linkspeed_bps bitrate, mem_b maxsize,
+                             EventList& eventlist, QueueLogger* logger, Switch_htsim* sw)
     : Queue(bitrate,maxsize,eventlist,logger), 
       _switch(sw),
       _state_send(READY),

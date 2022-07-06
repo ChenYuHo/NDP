@@ -770,16 +770,16 @@ string NdpSinkLoggerSampling::event_to_str(RawLogEvent& event) {
     return ss.str();
 }
 	    
-void QcnLoggerSimple::logQcn(QcnReactor &src, QcnEvent ev, double var3) {
-    if (ev!=QcnLogger::QCN_SEND)
-	_logfile->writeRecord(Logger::QCN_EVENT,src.id,ev,
-			      src._currentRate,src._packetCycles,var3);
-}
+//void QcnLoggerSimple::logQcn(QcnReactor &src, QcnEvent ev, double var3) {
+//    if (ev!=QcnLogger::QCN_SEND)
+//	_logfile->writeRecord(Logger::QCN_EVENT,src.id,ev,
+//			      src._currentRate,src._packetCycles,var3);
+//}
 
-void QcnLoggerSimple::logQcnQueue(QcnQueue &src, QcnQueueEvent ev, 
-				  double var1, double var2, double var3) {
-    _logfile->writeRecord(Logger::QCNQUEUE_EVENT,src.id,ev,var1,var2,var3);
-};
+//void QcnLoggerSimple::logQcnQueue(QcnQueue &src, QcnQueueEvent ev,
+//				  double var1, double var2, double var3) {
+//    _logfile->writeRecord(Logger::QCNQUEUE_EVENT,src.id,ev,var1,var2,var3);
+//};
 
 string QcnLoggerSimple::event_to_str(RawLogEvent& event) {
     stringstream ss;

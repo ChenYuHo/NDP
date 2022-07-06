@@ -2,8 +2,8 @@
 #include "ecnqueue.h"
 #include <math.h>
 #include "ecn.h"
-#include "queue_lossless.h"
 #include <iostream>
+#include "queue_lossless.h"
 
 ECNQueue::ECNQueue(linkspeed_bps bitrate, mem_b maxsize, 
 			 EventList& eventlist, QueueLogger* logger, mem_b  K)

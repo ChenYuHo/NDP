@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 4; tab-width: 8; indent-tabs-mode: t -*-        
 #include "camcubetopology.h"
 #include <vector>
-#include "string.h"
+#include "cstring"
 #include <sstream>
 #include <strstream>
 #include <iostream>
@@ -9,8 +9,7 @@
 #include "compositequeue.h"
 #include "compositeprioqueue.h"
 #include "main.h"
-
-extern uint32_t RTT;
+#include "common.h"
 
 string ntoa(double n);
 string itoa(uint64_t n);

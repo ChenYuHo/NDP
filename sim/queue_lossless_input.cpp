@@ -3,7 +3,7 @@
 #include <math.h>
 #include <iostream>
 #include <sstream>
-#include "switch.h"
+#include "switch_htsim.h"
 
 LosslessInputQueue::LosslessInputQueue(EventList& eventlist)
     : Queue(0,Packet::data_packet_size()*20,eventlist,NULL),

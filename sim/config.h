@@ -2,15 +2,13 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <sys/types.h>
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
-
 double drand();
-
 
 #ifdef _WIN32
 // Ways to refer to integer types
@@ -24,6 +22,7 @@ typedef long long sint64_t;
 
 // Specify units for simulation time, link speed, buffer capacity
 typedef uint64_t simtime_picosec;
+typedef simtime_picosec SIM_UNIT;
 
 int pareto(int xm, int mean);
 double exponential(double lambda);

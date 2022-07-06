@@ -11,6 +11,7 @@
 #include "eventlist.h"
 #include "network.h"
 #include "loggertypes.h"
+#include <random>
 
 class RandomQueue : public Queue {
  public:
@@ -18,8 +19,13 @@ class RandomQueue : public Queue {
 		QueueLogger* logger, mem_b drop);
     void receivePacket(Packet& pkt);
     void set_packet_loss_rate(double v);
+    double drand();
     // should really be private, but loggers want to see
  private:
+    std::random_device rd;
+    std::default_random_engine gen;
+    std::uniform_real_distribution<double> dice;
+
     mem_b _drop_th,_drop;
     int _buffer_drops;
     double _plr;

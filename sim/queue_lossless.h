@@ -13,27 +13,27 @@
 #include "loggertypes.h"
 #include "eth_pause_packet.h"
 
-class Switch;
+class Switch_htsim;
 
 class LosslessQueue : public Queue {
  public:
-    LosslessQueue(linkspeed_bps bitrate, mem_b maxsize, EventList &eventlist, QueueLogger* logger, 
-		  Switch* sw);
+    LosslessQueue(linkspeed_bps bitrate, mem_b maxsize, EventList &eventlist, QueueLogger* logger,
+                  Switch_htsim* sw);
 
     void receivePacket(Packet& pkt);
     void beginService();
     void completeService();
     void initThresholds();
 
-    void setSwitch(Switch *s) {_switch = s;};
-    Switch* getSwitch() {return _switch;};
+    void setSwitch(Switch_htsim *s) { _switch = s;};
+    Switch_htsim* getSwitch() {return _switch;};
 
     //void enqueuePauseFrame(EthPausePacket*);
 
     enum {PAUSED,READY,PAUSE_RECEIVED};
 
  private:
-    Switch* _switch;
+    Switch_htsim* _switch;
     int _state_send;
     int _state_recv;
 

@@ -13,7 +13,7 @@
 #include "loggertypes.h"
 #include "eth_pause_packet.h"
 
-class Switch;
+class Switch_htsim;
 
 class LosslessInputQueue : public Queue, public VirtualQueue {
  public:

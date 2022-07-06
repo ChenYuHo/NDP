@@ -14,7 +14,8 @@ Pipe::Pipe(simtime_picosec delay, EventList& eventlist)
 void
 Pipe::receivePacket(Packet& pkt)
 {
-    pkt.flow().logTraffic(pkt,*this,TrafficLogger::PKT_ARRIVE);
+//    myprintf("[%llu] pipe receivepacket\n", eventlist().now());
+//    pkt.flow().logTraffic(pkt,*this,TrafficLogger::PKT_ARRIVE);
     if (_inflight.empty()){
 	/* no packets currently inflight; need to notify the eventlist
 	   we've an event pending */
@@ -30,9 +31,10 @@ Pipe::doNextEvent() {
 
     Packet *pkt = _inflight.back().second;
     _inflight.pop_back();
-    pkt->flow().logTraffic(*pkt, *this,TrafficLogger::PKT_DEPART);
+//    pkt->flow().logTraffic(*pkt, *this,TrafficLogger::PKT_DEPART);
 
     // tell the packet to move itself on to the next hop
+//    pkt->cnt+=1;
     pkt->sendOn();
 
     if (!_inflight.empty()) {
