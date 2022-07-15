@@ -15,6 +15,22 @@ Route::add_endpoints(PacketSink *src, PacketSink* dst) {
     }
 }
 
+void Route::non_null() {
+    int fail = 0;
+    for (unsigned int i = 1; i < size() - 1; i += 2)
+        if (at(i) == nullptr) {
+            fail = 1;
+            break;
+        }
+    if (fail) {
+        //    cout <<"Null queue in route"<<endl;
+        for (unsigned int i = 1; i < size() - 1; i += 2)
+            myprintf("%p ", at(i));
+        cout << endl;
+        assert(0);
+    }
+}
+
 Route::~Route() {
 //    delete _reverse;
 //    for (auto &packet_sink: _sinklist) {

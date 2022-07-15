@@ -33,6 +33,7 @@ class Route {
     }
     inline int path_id() const {return _path_id;}
     inline int no_of_paths() const {return _no_of_paths;}
+    void non_null();
  private:
     vector<PacketSink*> _sinklist;
     Route* _reverse;
