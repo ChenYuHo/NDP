@@ -82,6 +82,8 @@ class Packet {
     virtual PacketSink* sendOn(); // "go on to the next hop along your route"
                                   // returns what that hop is
 
+    virtual PacketSink* sendOnSimple();
+
     virtual PacketSink* previousHop() {if (_nexthop>=2) return _route->at(_nexthop-2); else return NULL;}
     virtual PacketSink* currentHop() {if (_nexthop>=1) return _route->at(_nexthop-1); else return NULL;}
     
@@ -154,8 +156,8 @@ class Packet {
 
 class PacketSink {
  public:
-    PacketSink() { }
-    virtual ~PacketSink() {}
+    PacketSink() = default;
+    virtual ~PacketSink() = default;
     virtual void receivePacket(Packet& pkt) =0;
     virtual void receivePacket(Packet& pkt,VirtualQueue* previousHop) {
 	receivePacket(pkt);

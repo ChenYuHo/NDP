@@ -3,14 +3,12 @@
 #include "eventlist.h"
 
 void
-EventList::setEndtime(simtime_picosec endtime)
-{
+EventList::setEndtime(simtime_picosec endtime) {
     _endtime = endtime;
 }
 
 bool
-EventList::doNextEvent()
-{
+EventList::doNextEvent() {
     if (_sim.empty())
         return false;
     _sim.step();
@@ -19,12 +17,21 @@ EventList::doNextEvent()
 
 
 simcpp20::event<simtime_picosec>
-EventList::sourceIsPending(EventSource &src, simtime_picosec when)
-{
+EventList::sourceIsPending(EventSource &src, simtime_picosec when) {
     auto ev = _sim.event();
-    if (_endtime == 0 || when < _endtime) {
+    if (_endtime == 0 || when < _endtime) [[likely]] {
         ev.add_callback([&src](const auto &) { src.doNextEvent(); });
         _sim.schedule(ev, when - now());
+    } else ev.abort();
+    return ev;
+}
+
+simcpp20::event<simtime_picosec>
+EventList::sourceIsPendingRel(EventSource &src, simtime_picosec timefromnow) {
+    auto ev = _sim.event();
+    if (_endtime == 0 || now() + timefromnow < _endtime) [[likely]] {
+        ev.add_callback([&src](const auto &) { src.doNextEvent(); });
+        _sim.schedule(ev, timefromnow);
     } else ev.abort();
     return ev;
 }

@@ -16,9 +16,7 @@ public:
     bool doNextEvent(); // returns true if it did anything, false if there's nothing to do
     simcpp20::event<simtime_picosec> sourceIsPending(EventSource &src, simtime_picosec when);
 
-    simcpp20::event<simtime_picosec> sourceIsPendingRel(EventSource &src, simtime_picosec timefromnow) {
-        return sourceIsPending(src, now() + timefromnow);
-    }
+    simcpp20::event<simtime_picosec> sourceIsPendingRel(EventSource &src, simtime_picosec timefromnow);
 
     inline simtime_picosec now() const { return _sim.now(); }
     inline simcpp20::simulation<simtime_picosec> &sim() const { return _sim; }

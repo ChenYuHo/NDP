@@ -7,8 +7,8 @@ bool Packet::_packet_size_fixed = false;
 
 // use set_attrs only when we want to do a late binding of the route -
 // otherwise use set_route or set_rg
-void 
-Packet::set_attrs(PacketFlow& flow, int pkt_size, packetid_t id){
+void
+Packet::set_attrs(PacketFlow &flow, int pkt_size, packetid_t id) {
     _flow = &flow;
     _size = pkt_size;
     _id = id;
@@ -18,9 +18,9 @@ Packet::set_attrs(PacketFlow& flow, int pkt_size, packetid_t id){
     _flags = 0;
 }
 
-void 
-Packet::set_route(PacketFlow& flow, const Route &route, int pkt_size, 
-	    packetid_t id){
+void
+Packet::set_route(PacketFlow &flow, const Route &route, int pkt_size,
+                  packetid_t id) {
     _flow = &flow;
     _size = pkt_size;
     _id = id;
@@ -31,64 +31,73 @@ Packet::set_route(PacketFlow& flow, const Route &route, int pkt_size,
     _flags = 0;
 }
 
-void 
-Packet::set_route(const Route &route){
+void
+Packet::set_route(const Route &route) {
 //    delete _route;
     _route = &route;
 }
 
 PacketSink *
 Packet::sendOn() {
-    PacketSink* nextsink;
+    PacketSink *nextsink;
     if (_route) {
-	if (_bounced) {
-	    assert(_nexthop > 0);
-	    assert(_nexthop < _route->size());
-	    assert(_nexthop < _route->reverse()->size());
-	    //assert(_route->size() == _route->reverse()->size());
-	    nextsink = _route->reverse()->at(_nexthop);
-	    _nexthop++;
-	} else {
-	    assert(_nexthop<_route->size());
-	    nextsink = _route->at(_nexthop);
-	    _nexthop++;
-	}
+        if (_bounced) {
+            assert(_nexthop > 0);
+            assert(_nexthop < _route->size());
+            assert(_nexthop < _route->reverse()->size());
+            //assert(_route->size() == _route->reverse()->size());
+            nextsink = _route->reverse()->at(_nexthop);
+            _nexthop++;
+        } else {
+            assert(_nexthop < _route->size());
+            nextsink = _route->at(_nexthop);
+            _nexthop++;
+        }
     } else {
-	assert(0);
+        assert(0);
     }
+//    cout << nextsink << " nextsink\n" << _route << " route\n" << _bounced << " bounced\n" << _nexthop << " nexthop\n";
     nextsink->receivePacket(*this);
     return nextsink;
 }
 
 PacketSink *
-Packet::sendOn2(VirtualQueue* crtSink) {
-    PacketSink* nextsink;
+Packet::sendOn2(VirtualQueue *crtSink) {
+    PacketSink *nextsink;
     if (_route) {
-	if (_bounced) {
-	    assert(_nexthop > 0);
-	    assert(_nexthop < _route->size());
-	    assert(_nexthop < _route->reverse()->size());
-	    //assert(_route->size() == _route->reverse()->size());
-	    nextsink = _route->reverse()->at(_nexthop);
-	    _nexthop++;
-	} else {
-	    assert(_nexthop<_route->size());
-	    nextsink = _route->at(_nexthop);
-	    _nexthop++;
-	}
+        if (_bounced) {
+            assert(_nexthop > 0);
+            assert(_nexthop < _route->size());
+            assert(_nexthop < _route->reverse()->size());
+            //assert(_route->size() == _route->reverse()->size());
+            nextsink = _route->reverse()->at(_nexthop);
+            _nexthop++;
+        } else {
+            assert(_nexthop < _route->size());
+            nextsink = _route->at(_nexthop);
+            _nexthop++;
+        }
     } else {
-	assert(0);
+        assert(0);
     }
-    nextsink->receivePacket(*this,crtSink);
+    nextsink->receivePacket(*this, crtSink);
+    return nextsink;
+}
+
+PacketSink *
+Packet::sendOnSimple() {
+    PacketSink *nextsink = _route->at(_nexthop++);
+//    cout << nextsink << " nextsink\n" << _route << " route\n" << _bounced << " bounced\n" << _nexthop << " nexthop\n";
+    nextsink->receivePacket(*this);
     return nextsink;
 }
 
 // AKA, return to sender
-void 
-Packet::bounce() { 
-    assert(!_bounced); 
+void
+Packet::bounce() {
+    assert(!_bounced);
     assert(_route); // we only implement return-to-sender on regular routes
-    _bounced = true; 
+    _bounced = true;
     _is_header = true;
     _nexthop = _route->size() - _nexthop;
     //    _nexthop--;
@@ -98,22 +107,22 @@ Packet::bounce() {
     // allocate routes on a per packet basis.
 }
 
-void 
-Packet::unbounce(uint16_t pktsize) { 
-    assert(_bounced); 
+void
+Packet::unbounce(uint16_t pktsize) {
+    assert(_bounced);
     assert(_route); // we only implement return-to-sender on regular
     // routes, not route graphs. If we go back to using
     // route graphs at some, we'll need to fix this, but
     // for now we're not using them.
 
     // clear the packet for retransmission
-    _bounced = false; 
+    _bounced = false;
     _is_header = false;
     _size = pktsize;
     _nexthop = 0;
 }
 
-void 
+void
 Packet::free() {
 }
 
@@ -121,55 +130,54 @@ string
 Packet::str() const {
     string s;
     switch (_type) {
-    case IP:
-	s = "IP";
-	break;
-    case TCP:
-	s = "TCP";
-	break;
-    case TCPACK:
-	s = "TCPACK";
-	break;
-    case TCPNACK:
-	s = "TCPNACK";
-	break;
-    case NDP:
-	s = "NDP";
-	break;
-    case NDPACK:
-	s = "NDPACK";
-	break;
-    case NDPNACK:
-	s = "NDPNACK";
-	break;
-    case NDPPULL:
-	s = "NDPPULL";
-	break;
-    case NDPLITE:
-	s = "NDPLITE";
-	break;
-    case NDPLITEACK:
-	s = "NDPLITEACK";
-	break;
-    case NDPLITERTS:
-	s = "NDPLITERTS";
-	break;
-    case NDPLITEPULL:
-	s = "NDPLITEPULL";
-	break;
-    case ETH_PAUSE:
-	s = "ETHPAUSE";
-	break;
+        case IP:
+            s = "IP";
+            break;
+        case TCP:
+            s = "TCP";
+            break;
+        case TCPACK:
+            s = "TCPACK";
+            break;
+        case TCPNACK:
+            s = "TCPNACK";
+            break;
+        case NDP:
+            s = "NDP";
+            break;
+        case NDPACK:
+            s = "NDPACK";
+            break;
+        case NDPNACK:
+            s = "NDPNACK";
+            break;
+        case NDPPULL:
+            s = "NDPPULL";
+            break;
+        case NDPLITE:
+            s = "NDPLITE";
+            break;
+        case NDPLITEACK:
+            s = "NDPLITEACK";
+            break;
+        case NDPLITERTS:
+            s = "NDPLITERTS";
+            break;
+        case NDPLITEPULL:
+            s = "NDPLITEPULL";
+            break;
+        case ETH_PAUSE:
+            s = "ETHPAUSE";
+            break;
     }
     return s;
 }
 
 uint32_t PacketFlow::_max_flow_id = 0;
 
-PacketFlow::PacketFlow(TrafficLogger* logger)
-    : Logged("PacketFlow"),
-      _logger(logger)
-{
+PacketFlow::PacketFlow(TrafficLogger *logger)
+        : Logged("PacketFlow"),
+          _logger(logger) {
     _flow_id = _max_flow_id++;
 }
 
@@ -177,19 +185,19 @@ void PacketFlow::set_logger(TrafficLogger *logger) {
     _logger = logger;
 }
 
-void 
-PacketFlow::logTraffic(Packet& pkt, Logged& location, TrafficLogger::TrafficEvent ev) {
+void
+PacketFlow::logTraffic(Packet &pkt, Logged &location, TrafficLogger::TrafficEvent ev) {
     if (_logger)
-	_logger->logTraffic(pkt, location, ev);
+        _logger->logTraffic(pkt, location, ev);
 }
 
-void print_route(const Route& route) {
-    cout<<"print_route: ";
+void print_route(const Route &route) {
+    cout << "print_route: ";
     for (int i = 0; i < route.size(); i++) {
-	PacketSink* sink = route.at(i);
-	if (i > 0) 
-	    cout << " -> ";
-	cout << sink->nodename();
+        PacketSink *sink = route.at(i);
+        if (i > 0)
+            cout << " -> ";
+        cout << sink->nodename();
     }
     cout << endl;
 }
